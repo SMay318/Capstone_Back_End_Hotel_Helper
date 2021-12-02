@@ -12,3 +12,5 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     middle_name = models.CharField(max_length=20)
+    is_employee = models.BooleanField(default=False)
+    is_manager = models.BooleanField(default=False)
