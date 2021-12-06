@@ -6,5 +6,5 @@ User = get_user_model()
 
 class Comments(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    issue_id = models.ForeignKey(Issues,on_delete=models.CASCADE)
+    issues = models.ForeignKey(Issues,on_delete=models.CASCADE)
     comment = models.TextField(max_length=300)

@@ -1,8 +1,8 @@
 from django.urls import path
+from drf_jwt_capstone_backend.issues.views import IssuesDetail
 from issues import views
 
 urlpatterns = [
-    path('all/', views.get_all_issues),
-    path('', views.user_issues),
-    path('details/', views.issue_details)
+    path('', views.IssuesList.as_view()),
+    path('<int:pk>', views.IssuesDetail.as_view()),
 ]

@@ -1,51 +1,50 @@
-from rest_framework import serializers, status
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.decorators import api_view, permission_classes
 from .models import Issues
 from .serializers import IssuesSerializer
-from django.contrib.auth.models import User
+from rest_framework.permissions import IsAuthenticated
 
-@api_view(['GET'])
-@permission_classes({AllowAny})
-def get_all_issues(request):
-    issues = Issues.objects.all()
-    serializer = IssuesSerializer(issues, many =True)
-    return Response(serializer.data)
 
-@api_view(['POST', 'GET'])
-@permission_classes([IsAuthenticated])
-def user_issues(request):
+class IssuesList(APIView):
 
-    print('User', f"{request.user.id}{request.user.email}{request.user.username}")
+    def get(self, request):
+        reviews = Issues.objects.all()
+        serializer = IssuesSerializer(reviews, many=True)
+        return Response(serializer.data)
 
-    if request.method == 'POST':
+    def post(self, request):
         serializer = IssuesSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(user=request.user)
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errrors, status=status.HTTP_400_BAD_REquest)
-    elif request.method == 'GET':
-        issues = Issues.objects.filter(user_id=request.user.id)
-        serializer = IssuesSerializer(issues, many=True)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class IssuesDetail(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, pk):
+        try:
+            return Issues.objects.get(pk=pk)
+        except Issues.DoesNotExist:
+            raise status.HTTP_404_NOT_FOUND
+
+    def get(self, request, pk):
+        review = self.get_object(pk)
+        serializer = IssuesSerializer(review)
         return Response(serializer.data)
 
-@api_view({'GET', 'PUT','DELETE'})
-@permission_classes({IsAuthenticated})
-def issue_details(request):
-    issues= Issues.objects.filter(user_id=request.user.id)
-    serializer = IssuesSerializer(issues, many=True)
-    if request.method == 'GET':
-        serializer = IssuesSerializer(issues)
-        return Response(serializer.data)
-    elif request.method == 'PUT':
-        serializer = IssuesSerializer(issues, data=request.data)
+    def put(self, request, pk):
+        update_review = self.get_object(pk)
+        serializer = IssuesSerializer(update_review, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    elif request.method == 'DELETE':
-        issues.delete()
-        return Response ({'Alert': 'Issue was successfully deleted.'}, status=status.HTTP_204_NO_CONTENT)
+
+    def delete(self, request, pk):
+        delete_review = self.get_object(pk)
+        delete_review.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
