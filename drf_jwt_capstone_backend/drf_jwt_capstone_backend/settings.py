@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'authentication.apps.AuthenticationConfig',
     'corsheaders',
-    'issues',
+    'issues.apps.IssuesConfig',
+    'comments.apps.CommentsConfig'
 ]
 
 MIDDLEWARE = [
