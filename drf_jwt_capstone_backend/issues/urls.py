@@ -3,5 +3,6 @@ from issues import views
 
 urlpatterns = [
     path('all/', views.get_all_issues),
-    path('', views.user_issues)
+    path('', views.user_issues),
+    path('details/', views.issue_details)
 ]

@@ -31,3 +31,21 @@ def user_issues(request):
         serializer = IssuesSerializer(issues, many=True)
         return Response(serializer.data)
 
+@api_view({'GET', 'PUT','DELETE'})
+@permission_classes({IsAuthenticated})
+def issue_details(request):
+    issues= Issues.objects.filter(user_id=request.user.id)
+    serializer = IssuesSerializer(issues, many=True)
+    if request.method == 'GET':
+        serializer = IssuesSerializer(issues)
+        return Response(serializer.data)
+    elif request.method == 'PUT':
+        serializer = IssuesSerializer(issues, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'DELETE':
+        issues.delete()
+        return Response ({'Alert': 'Issue was successfully deleted.'}, status=status.HTTP_204_NO_CONTENT)
+
