@@ -9,8 +9,8 @@ from rest_framework.permissions import IsAuthenticated
 class IssuesList(APIView):
 
     def get(self, request):
-        reviews = Issues.objects.all()
-        serializer = IssuesSerializer(reviews, many=True)
+        issues = Issues.objects.all()
+        serializer = IssuesSerializer(issues, many=True)
         return Response(serializer.data)
 
     def post(self, request):
@@ -30,21 +30,21 @@ class IssuesDetail(APIView):
             raise status.HTTP_404_NOT_FOUND
 
     def get(self, request, pk):
-        review = self.get_object(pk)
-        serializer = IssuesSerializer(review)
+        issue = self.get_object(pk)
+        serializer = IssuesSerializer(issue)
         return Response(serializer.data)
 
     def put(self, request, pk):
-        update_review = self.get_object(pk)
-        serializer = IssuesSerializer(update_review, data=request.data)
+        update_issue = self.get_object(pk)
+        serializer = IssuesSerializer(update_issue, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
-        delete_review = self.get_object(pk)
-        delete_review.delete()
+        delete_issue = self.get_object(pk)
+        delete_issue.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

@@ -9,8 +9,8 @@ from rest_framework.permissions import IsAuthenticated
 class CommentsList(APIView):
 
     def get(self, request):
-        replies = Comments.objects.all()
-        serializer = CommentsSerializer(replies, many=True)
+        comments = Comments.objects.all()
+        serializer = CommentsSerializer(comments, many=True)
         return Response(serializer.data)
 
     def post(self, request):
@@ -30,8 +30,8 @@ class CommentsDetail(APIView):
             raise status.HTTP_404_NOT_FOUND
 
     def get(self, request, pk):
-        reply = self.get_object(pk)
-        serializer = CommentsSerializer(reply)
+        comment = self.get_object(pk)
+        serializer = CommentsSerializer(comment)
         return Response(serializer.data)
 
     def put(self, request, pk):
@@ -43,6 +43,6 @@ class CommentsDetail(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
-        delete_reply = self.get_object(pk)
-        delete_reply.delete()
+        delete_comment = self.get_object(pk)
+        delete_comment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
